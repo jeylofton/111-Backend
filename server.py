@@ -54,9 +54,9 @@ def create_product():
 
     connection = sqlite3.connect(DB_NAME)
     cursor = connection.cursor()
-    cursor.execute("INSERT INTO products (name, catagory, price, image) VALUE (?, ?, ?, ?)", (name, category, price, image))
-    cursor.commit()
-    cursor.close()
+    cursor.execute("INSERT INTO products (name, category, price, image) VALUES (?, ?, ?, ?)", (name, category, price, image))
+    connection.commit()
+    connection.close()
 
     return jsonify({
         "success": True,
@@ -64,7 +64,24 @@ def create_product():
     }), 201
 
 # ----- COUPONS -----
+@app.post("/api/coupons")
+def create_coupon():
+    new_coupon = request.get_json()
+    print(new_coupon)
 
+    code = new_coupon["code"]
+    discount = new_coupon["discount"]
+
+    connection = sqlite3.connect(DB_NAME)
+    cursor = connection.cursor()
+    cursor.execute("INSERT INTO coupons(code, discount) VALUES (?, ?)", (code, discount))
+    connection.commit()
+    connection.close()
+
+    return jsonify({
+        "Success": True,
+        "message": "coupon added"
+    }), 201
 
 init_db()
 app.run(debug=True)
