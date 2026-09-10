@@ -18,7 +18,6 @@ def init_db():
     )
     """)
 
-    # Mini Challenge
     cursor.execute("""
     CREATE TABLE IF NOT EXISTS products (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -62,6 +61,27 @@ def create_product():
         "success": True,
         "message": "product created successfully"
     }), 201
+
+@app.get("/api/products")
+def get_products():
+
+    connection = sqlite3.connect(DB_NAME) # open the connection to the D.B.
+    connection.row_factory = sqlite3.Row # makes each row behaves like a dictionary
+    cursor = connection.cursor() # execute sql syntax
+    cursor.execute("SELECT * FROM products")
+    products_db = cursor.fetchall() # retrieves all rows from the result of the query
+    connection.close()
+
+    products = []
+    for product in products_db:
+        products.append(dict(product))
+
+    return jsonify({
+        "success": True,
+        "message": "products retrieved successfully",
+        "data": products
+    })
+
 
 # ----- COUPONS -----
 @app.post("/api/coupons")
