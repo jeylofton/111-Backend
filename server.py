@@ -82,6 +82,30 @@ def get_products():
         "data": products
     })
 
+# GET /api/product/<#>
+@app.get("/api/products/<int:product_id>")
+def get_product_by_id(product_id):
+    connection = sqlite3.connect(DB_NAME)
+    connection.row_factory = sqlite3.Row
+    cursor = connection.cursor()
+    cursor.execute("SELECT * From products WHERE id = ?", (product_id,))
+    product_db = cursor.fetchone()
+
+    if product_db is None:
+        return jsonify({
+            "success": False,
+            "message": "product not found"
+        }), 404
+
+    connection.close()
+    print(dict(product_db))
+    product = dict(product_db)
+    
+    return jsonify({
+        "success": True,
+        "message": "products retrieved successfully",
+        "data": product
+    }), 200
 
 # ----- COUPONS -----
 @app.post("/api/coupons")
@@ -102,6 +126,25 @@ def create_coupon():
         "Success": True,
         "message": "coupon added"
     }), 201
+
+@app.get("/api/coupons")
+def get_coupons():
+    connection = sqlite3.connect(DB_NAME)
+    connection.row_factory = sqlite3.Row
+    cursor = connection.cursor()
+    cursor.execute("SELECT * FROM coupons")
+    coupons_db = cursor.fetchall()
+    connection.close()
+
+    coupons = []
+    for coupon in coupons_db:
+        coupons.append(dict(coupon))
+
+    return jsonify({
+            "success": True,
+            "message": "coupons retrieved successfully",
+            "data": coupons
+        })
 
 init_db()
 app.run(debug=True)
