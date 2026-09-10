@@ -146,5 +146,29 @@ def get_coupons():
             "data": coupons
         })
 
+@app.get("/api/coupons/<int:coupon_id>")
+def get_coupon_by_id(coupon_id):
+    connection = sqlite3.connect(DB_NAME)
+    connection.row_factory = sqlite3.Row
+    cursor = connection.cursor()
+    cursor.execute("SELECT * From coupons WHERE id = ?", (coupon_id,))
+    coupon_db = cursor.fetchone()
+
+    if coupon_db is None:
+        return jsonify({
+            "success": False,
+            "message": "product not found"
+        }), 404
+    
+    connection.close()
+    print(dict(coupon_db))
+    coupon = dict(coupon_db)
+        
+    return jsonify({
+        "success": True,
+        "message": "products retrieved successfully",
+        "data": coupon
+    }), 200
+
 init_db()
 app.run(debug=True)
