@@ -1,0 +1,14 @@
+# macOS junk (this drive is exFAT, so macOS writes ._ sidecar files)
+._*
+.DS_Store
+.Spotlight-V100
+.Trashes
+
+# Python virtual environment
+venv/
+__pycache__/
+*.pyc
+
+# SQLite temporary files (recreated automatically, never commit these)
+*.db-shm
+*.db-wal
